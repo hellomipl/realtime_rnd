@@ -1,0 +1,71 @@
+h2 {
+    color: #3f51b5;
+}
+
+h3 {
+    margin-top: 20px;
+}
+
+.page {
+    // margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    // min-height: 835px;
+    // height: 835px;
+}
+
+.line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.line-number {
+    width: 50px;
+    text-align: right;
+    margin-right: 10px;
+    color: #555;
+}
+
+.timestamp {
+    margin-right: 10px;
+    color: #999;
+}
+
+.line-text {
+    flex-grow: 1;
+}
+
+
+.fixed-header {
+    // position: fixed;
+    // top: 0;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    background: white;
+    z-index: 1000;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+    padding-top: 10px;
+    /* Adjust this value based on the height of your fixed header */
+    height: calc(100% - 66px);
+    /* Adjust this value based on the height of your fixed header */
+}
+
+.mat-dialog-container {
+    position: absolute;
+    top: 10%;
+    right: 0;
+    height: 60%;
+}
+
+.viewport {
+    height: 100%;
+    /* Adjust height as needed */
+    width: 100%;
+}

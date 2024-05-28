@@ -1,7 +1,7 @@
-<div class="page" [ngStyle]="{'height': itemSize + 'px', 'min-height': itemSize + 'px'}">
+ <div class="page"   [ngStyle]="{'height': itemSize + 'px', 'min-height': itemSize + 'px'}">
   <h6>{{ page.msg }}</h6>
   <ng-container *ngFor="let line of page.data; let lineIndex = index; trackBy: trackByLine">
-    <app-feed-line 
+    <app-feed-line  (mouseup)="onMouseUp()"
       [line]="line" 
       [lineIndex]="lineIndex" 
       [page]="page"
@@ -9,4 +9,5 @@
       [isBold]="isBold(line.lines, lineIndex, page.data)">
     </app-feed-line>
   </ng-container>
+ <app-annotation-layer [annotations]="annotations"></app-annotation-layer>
 </div>

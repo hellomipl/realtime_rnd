@@ -1,1 +1,12 @@
-<p>toolbar works!</p>
+<div class="toolbar">
+    <p>
+      <button mat-button (click)="onOpenLiveFeedDialog()">Live Feed</button>
+      <!-- Session ID: {{ sessionDetails.sessionId }}
+      User Name: {{ sessionDetails.userName }} -->
+      <!-- itemSize: {{ itemSize }} -->
+    </p>
+    <label>
+      <input type="checkbox" (change)="onToggleTimestamp()"> Show Time
+    </label>
+  </div>
+  

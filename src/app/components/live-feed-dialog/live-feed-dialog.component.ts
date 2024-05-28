@@ -27,7 +27,7 @@ export class LiveFeedDialogComponent {
     const lines = inputText.split('\n');
     const lineData = lines.map((line, index) => {
       const asciiValue = line.split('').map(char => char.charCodeAt(0));
-      return { time: new Date().toLocaleTimeString(), asciiValue, globalLineNumber: this.data.baseLineNumber + index };
+      return { time: new Date().toLocaleTimeString(), asciiValue, inCommingLineNo: this.data.baseLineNumber + index };
     });
 
     const feedData: FeedData = {

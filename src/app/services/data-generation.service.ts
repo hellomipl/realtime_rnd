@@ -54,7 +54,7 @@ export class DataGenerationService {
     const specialChars = "!@#$%^&*()_+[]{}|;:',.<>?";
     let questionInserted = false;
 
-    for (let i = 0; i < linesPerPage; i++) {
+    for (let i = 1; i < linesPerPage+1; i++) {
       const timestamp = this.formatTimestamp(new Date());
       let lineText = this.generateRandomSentence();
 

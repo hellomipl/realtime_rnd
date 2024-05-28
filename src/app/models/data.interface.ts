@@ -1,7 +1,7 @@
 export interface LineData {
     time: string;
     asciiValue: number[];
-    globalLineNumber: number;
+    inCommingLineNo: number;
   }
   
   export interface FeedData {

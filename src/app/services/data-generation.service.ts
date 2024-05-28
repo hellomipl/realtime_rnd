@@ -6,10 +6,11 @@ import { Injectable } from '@angular/core';
 export class DataGenerationService {
   private sessionId: string;
   private userName: string;
-
+private sd:any;
   constructor() {
     this.sessionId = this.generateSessionId();
     this.userName = 'User_' + Math.floor(Math.random() * 1000);
+    this.sd =this.getSessionDetails();
   }
 
   private generateSessionId(): string {
@@ -18,21 +19,23 @@ export class DataGenerationService {
 
   getSessionDetails() {
     return {
-      lastPage: 5,
+      lastPage: 2,
       lastLineNumber: 22, // Random line number between 1 and 25 for the last page
       sessionId: this.sessionId,
       userName: this.userName,
       settings: {
-        lineNumber: 25,
+        lineNumber: 35,
         startPage: 1,
       },
     };
   }
 
-  generatePreviousFetchData(pages: number, lastLineNumber: number): any[] {
+  generatePreviousFetchData(pages: number): any[] {
+    
     const previousData = [];
     for (let i = 1; i <= pages; i++) {
-      const lines = i === pages ? lastLineNumber : 25; // Use lastLineNumber for the last page
+      const lines = i === pages ?   this.sd.lastLineNumber :this.sd.settings.lineNumber; // Use lastLineNumber for the last page
+ 
       const pageData = this.generateMockPreviousPageData(i, lines);
       previousData.push(pageData);
     }

@@ -21,14 +21,13 @@ export class FeedDisplayService {
  */
   private feedDataSubject = new BehaviorSubject<any[]>([]);
   feedData$ = this.feedDataSubject.asObservable();
-  //globalLineNumber: number = 0;
-  needScroll: boolean = false;
+  needScroll: boolean = false; //flag to check if the scroll is needed this will ensure the scroll will happen only once after the viewUpdated
   sd:any;
   constructor(private dataService: DataGenerationService) { }
 
   initialize(sessionDetails: any) {
     this.sd=sessionDetails;
-    const previousData = this.dataService.generatePreviousFetchData(sessionDetails.lastPage, sessionDetails.lastLineNumber);
+    const previousData = this.dataService.generatePreviousFetchData(sessionDetails.lastPage);
     this.feedDataSubject.next(this.dataService.parsePreviousFetchData(previousData));
     this.setGlobalLineNumber()
    // this.globalLineNumber = sessionDetails.lastPage * 25 + sessionDetails.lastLineNumber;
@@ -41,33 +40,35 @@ export class FeedDisplayService {
     data.d.forEach((lineData: LineData) => {
      
       const { time, asciiValue, inCommingLineNo } = lineData;
-      const pageIndex = Math.floor((inCommingLineNo - 1) / Number(this.sd.settings.lineNumber));
-      const localLineNumber =this.getLineOfCurPage(inCommingLineNo)
+
+      const pageIndex = Math.floor((inCommingLineNo - 1) / Number(this.sd.settings.lineNumber)); //get the pageindex based on the incoming line number     
+      const localLineNumber =this.getLineOfCurPage(inCommingLineNo) //get the line number of the current page
 
       const lineDataFormatted = { time, asciiValue, lineIndex: localLineNumber, lines: [String.fromCharCode(...asciiValue)] };
 
-      if (!currentArray[pageIndex]) {
+      if (!currentArray[pageIndex]) { //if the page index is not present in the current array, then create a new page
         this.needScroll = true;
         currentArray[pageIndex] = { msg: pageIndex + 1, page: pageIndex + 1, data: [] };
       }
 
-      const pageData = currentArray[pageIndex].data;
-      const existingLineIndex = pageData.findIndex((line: any) => line.lineIndex === localLineNumber);
+      const pageData = currentArray[pageIndex].data; //get the data of the current page
+      const existingLineIndex = pageData.findIndex((line: any) => line.lineIndex === localLineNumber); //check if the line is already present in the page   
 
-      if (existingLineIndex >= 0) {
+      if (existingLineIndex >= 0) { //if the line is already present in the page, then update the line
         pageData[existingLineIndex] = lineDataFormatted;
-      } else {
+      } else { //if the line is not present in the page, then add the line
         this.needScroll = true;
         pageData.push(lineDataFormatted);
         pageData.sort((a: any, b: any) => a.lineIndex - b.lineIndex);
       }
     });
 
-    this.sd.lastPage = currentArray.length
-    this.sd.lastLineNumber=currentArray[currentArray.length-1].data.length;
+    this.sd.lastPage = currentArray.length //update the last page number to the sessions details
+    this.sd.lastLineNumber=currentArray[currentArray.length-1].data.length; //update the last line number of the last page to the sessions details
+    this.setGlobalLineNumber(); //update the global line(total lines) number to the sessions details
     this.feedDataSubject.next(currentArray.slice());
     
-    this.sd.lastLineNumber = Math.max(this.sd.lastLineNumber, ...data.d.map(line => line.inCommingLineNo));
+//    this.sd.lastLineNumber = Math.max(this.sd.lastLineNumber, ...data.d.map(line => line.inCommingLineNo));
   }
 
   
@@ -90,8 +91,8 @@ export class FeedDisplayService {
   }
 
   setGlobalLineNumber() {  
-    this.sd.lastPage = this.feedDataSubject.getValue().length;
-    this.sd.lastLineNumber = Number(Number(this.sd.lastPage)-1) * (this.sd.settings.lineNumber) + this.feedDataSubject.getValue()[Number( this.sd.lastPage) - 1].data.length;
+    this.sd.globalLineNo = Number(Number(this.sd.lastPage)-1) * (this.sd.settings.lineNumber) + this.feedDataSubject.getValue()[Number( this.sd.lastPage) - 1].data.length;
+    
   }
 
   getLineOfCurPage(globalLineNumber:Number): Number {

@@ -40,7 +40,7 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
   sessionDetails: any;
   showTimestamp: boolean = false;
   itemSize: any = 835;
-
+  lineHeight:Number=29;
   private destroy$ = new Subject<void>();
   constructor(
     private fds: FeedDisplayService,
@@ -52,7 +52,7 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     this.sessionDetails = this.dataService.getSessionDetails();
     this.fds.initialize(this.sessionDetails);
      this.feedData$ = this.fds.feedData$;
-     this.lastlines = this.fds.sd.lastLineNumber;
+     this.lastlines = this.fds.sd.globalLineNo;
   }
 
   ngAfterViewChecked() {
@@ -100,11 +100,10 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
 
     this.feedData$.pipe(takeUntil(this.destroy$)).subscribe(feedData => {
       if (this.viewport && feedData.length > 0) {
-        const lastPage = feedData.length - 1;
-        const lastLine = feedData[lastPage].data.length - 1;
-        const totalLines = 25;
-        const lineHeight = 29;
-        const scrollOffset = (totalLines - lastLine) * lineHeight;
+        const lastLine = Number(this.fds.sd.lastLineNumber-1);
+        const totalLines = Number(this.fds.sd.settings.lineNumber)
+       
+        const scrollOffset = (totalLines - lastLine) * Number(this.lineHeight);
         this.viewport.scrollToIndex(feedData.length - 1);
 
         const currentScrollPosition = this.viewport.measureScrollOffset();
@@ -116,10 +115,9 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
    return this.fds.isBold(line, index, data);
   }
   private calculatePageHeight() {
-    const screenHeight = window.innerHeight;
-    const linesPerPage = 25;
-    const lineHeight = 29;
-    this.itemSize = (lineHeight * linesPerPage) + 60;
+//    const screenHeight = window.innerHeight;
+    const linesPerPage = this.fds.sd.settings.lineNumber;
+    this.itemSize = (Number(this.lineHeight) * linesPerPage) + 60;
 
     if (this.viewport) {
       this.viewport.checkViewportSize();

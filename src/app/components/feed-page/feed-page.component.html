@@ -1,0 +1,12 @@
+<div class="page" [ngStyle]="{'height': itemSize + 'px', 'min-height': itemSize + 'px'}">
+  <h6>{{ page.msg }}</h6>
+  <ng-container *ngFor="let line of page.data; let lineIndex = index; trackBy: trackByLine">
+    <app-feed-line 
+      [line]="line" 
+      [lineIndex]="lineIndex" 
+      [page]="page"
+      [showTimestamp]="showTimestamp"
+      [isBold]="isBold(line.lines, lineIndex, page.data)">
+    </app-feed-line>
+  </ng-container>
+</div>

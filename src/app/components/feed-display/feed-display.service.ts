@@ -72,23 +72,7 @@ export class FeedDisplayService {
   }
 
   
-  isBold(line: string[], index: number, data: any[]): boolean {
-    if (line[0].startsWith('Q.')) {
-      return true;
-    }
-    if (line[0].startsWith('A.')) {
-      return false;
-    }
-    for (let i = index - 1; i >= 0; i--) {
-      if (data[i].lines[0].startsWith('Q.')) {
-        return true;
-      }
-      if (data[i].lines[0].startsWith('A.')) {
-        return false;
-      }
-    }
-    return false;
-  }
+  
 
   setGlobalLineNumber() {  
     this.sd.globalLineNo = Number(Number(this.sd.lastPage)-1) * (this.sd.settings.lineNumber) + this.feedDataSubject.getValue()[Number( this.sd.lastPage) - 1].data.length;

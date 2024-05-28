@@ -10,29 +10,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { FeedData, LineData } from '../../models/data.interface';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FeedDisplayService } from './feed-display.service';
+import { FeedPageComponent } from '../feed-page/feed-page.component';
 
 @Component({
   selector: 'app-feed-display',
   standalone: true,
-  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent],
+  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent,FeedPageComponent],
   templateUrl: './feed-display.component.html',
   styleUrls: ['./feed-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-/**?
- * 
- *  {
-      lastPage: 5,
-      lastLineNumber: 22, // Random line number between 1 and 25 for the last page
-      sessionId: this.sessionId,
-      userName: this.userName,
-      settings: {
-        lineNumber: 25,
-        startPage: 1,
-      },
-    };
- */
+
 export class FeedDisplayComponent implements OnInit, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   feedData$: Observable<any[]> = new BehaviorSubject<any[]>([]);
@@ -112,12 +101,9 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  isBold(line: string[], index: number, data: any[]): boolean {
-    return this.fds.isBold(line, index, data);
-  }
+ 
   private calculatePageHeight() {
-    debugger;
-    //    const screenHeight = window.innerHeight;
+
     const linesPerPage = this.fds.sd.settings.lineNumber;
     this.itemSize = (Number(this.lineHeight) * linesPerPage) + 60;
     this.cdr.detectChanges();

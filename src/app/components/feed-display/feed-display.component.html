@@ -1,11 +1,10 @@
-
 <app-toolbar 
   *ngIf="sessionDetails" 
   [sessionDetails]="sessionDetails" 
   [itemSize]="itemSize"
-  
   (toggleTimestamp)="toggleTimestamp()"
-  (openLiveFeedDialog)="openLiveFeedDialog()">
+  (openLiveFeedDialog)="openLiveFeedDialog()"
+  (performAnnotation)="performAnnotation()">
 </app-toolbar>
 <div class="content">
   <cdk-virtual-scroll-viewport [itemSize]="itemSize" class="viewport">
@@ -17,19 +16,4 @@
       </app-feed-page>
     </ng-container>
   </cdk-virtual-scroll-viewport>
-
-  <!-- <cdk-virtual-scroll-viewport [itemSize]="itemSize" class="viewport">
-    <div *cdkVirtualFor="let page of feedData$ | async; let pageIndex = index; trackBy: trackByPage" class="page" [ngStyle]="{'height':itemSize+'px','min-height':itemSize+'px'}">
-      <h6>{{ page.msg }}</h6>
-      <div *ngFor="let line of page.data; let lineIndex = index; trackBy: trackByLine" class="line" [appBoldQA]="isBold(line.lines, lineIndex, page.data)">
-      
-        <span class="line-number">  {{ page.page }}.{{ line.lineIndex }}</span>
-        <span *ngIf="showTimestamp" class="timestamp">{{ line.time }}: </span>
-        <span class="line-text">{{ line.lines[0] }}
-       
-
-        </span>
-      </div>
-    </div>
-  </cdk-virtual-scroll-viewport> -->
 </div>

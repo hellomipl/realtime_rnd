@@ -1,14 +1,14 @@
-import { InputModalityDetector } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Annotation } from '../../models/annotation.interface';
 
 @Component({
   selector: 'app-annotation-layer',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './annotation-layer.component.html',
-  styleUrl: './annotation-layer.component.scss'
+  styleUrls: ['./annotation-layer.component.scss']
 })
 export class AnnotationLayerComponent {
-@Input() annotations: any;
+  @Input() annotations: Annotation[] =[];
 }

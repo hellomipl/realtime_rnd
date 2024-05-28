@@ -1,0 +1,17 @@
+.main-layout {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .left-section {
+    flex: 0 0 60%;
+    background-color: #f5f5f5; /* Optional: Add background color */
+    overflow-y: auto;
+  }
+  
+  .right-section {
+    flex: 1;
+    background-color: #ffffff; /* Optional: Add background color */
+    overflow-y: auto;
+  }
+  

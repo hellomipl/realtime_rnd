@@ -12,6 +12,7 @@ export class ToolbarComponent {
   @Input() itemSize: number=0;
   @Output() toggleTimestamp = new EventEmitter<void>();
   @Output() openLiveFeedDialog = new EventEmitter<void>();
+  @Output() performAnnotation = new EventEmitter<void>();
 
   onToggleTimestamp() {
     this.toggleTimestamp.emit();
@@ -19,5 +20,9 @@ export class ToolbarComponent {
 
   onOpenLiveFeedDialog() {
     this.openLiveFeedDialog.emit();
+  }
+
+  onPerformAnnotation() {
+    this.performAnnotation.emit();
   }
 }

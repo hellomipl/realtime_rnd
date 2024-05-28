@@ -10,11 +10,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { FeedData, LineData } from '../../models/data.interface';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FeedDisplayService } from './feed-display.service';
+import { FeedPageComponent } from '../feed-page/feed-page.component';
 
 @Component({
   selector: 'app-feed-display',
   standalone: true,
-  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent],
+  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent,FeedPageComponent],
   templateUrl: './feed-display.component.html',
   styleUrls: ['./feed-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -116,8 +117,7 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     return this.fds.isBold(line, index, data);
   }
   private calculatePageHeight() {
-    debugger;
-    //    const screenHeight = window.innerHeight;
+  
     const linesPerPage = this.fds.sd.settings.lineNumber;
     this.itemSize = (Number(this.lineHeight) * linesPerPage) + 60;
     this.cdr.detectChanges();

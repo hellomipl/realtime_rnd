@@ -8,19 +8,28 @@
   (openLiveFeedDialog)="openLiveFeedDialog()">
 </app-toolbar>
 <div class="content">
-
   <cdk-virtual-scroll-viewport [itemSize]="itemSize" class="viewport">
+    <ng-container *cdkVirtualFor="let page of feedData$ | async; let pageIndex = index; trackBy: trackByPage">
+      <app-feed-page 
+        [page]="page" 
+        [itemSize]="itemSize" 
+        [showTimestamp]="showTimestamp">
+      </app-feed-page>
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+
+  <!-- <cdk-virtual-scroll-viewport [itemSize]="itemSize" class="viewport">
     <div *cdkVirtualFor="let page of feedData$ | async; let pageIndex = index; trackBy: trackByPage" class="page" [ngStyle]="{'height':itemSize+'px','min-height':itemSize+'px'}">
       <h6>{{ page.msg }}</h6>
       <div *ngFor="let line of page.data; let lineIndex = index; trackBy: trackByLine" class="line" [appBoldQA]="isBold(line.lines, lineIndex, page.data)">
-        <!-- <span> {{((page.msg-1) *25) + line.lineIndex }} </span> -->
+      
         <span class="line-number">  {{ page.page }}.{{ line.lineIndex }}</span>
         <span *ngIf="showTimestamp" class="timestamp">{{ line.time }}: </span>
         <span class="line-text">{{ line.lines[0] }}
-          <!-- {{ lastlines}} -->
+       
 
         </span>
       </div>
     </div>
-  </cdk-virtual-scroll-viewport>
+  </cdk-virtual-scroll-viewport> -->
 </div>

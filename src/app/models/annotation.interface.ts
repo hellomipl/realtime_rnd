@@ -6,4 +6,3 @@ export interface Annotation {
     coordinates: { x: number, y: number, width: number, height: number }[];
     timestamp: Date;
   }
-  

@@ -18,7 +18,7 @@ export class AnnotationDialogComponent {
   annotation: Annotation;
   uniqueId: string;
   selectedText: string;
-
+  permissionMode:any="N"
   constructor(
     private annotationService: AnnotationService,
     public dialogRef: MatDialogRef<AnnotationDialogComponent>,

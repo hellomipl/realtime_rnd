@@ -1,17 +1,22 @@
 <div class="toolbar">
-    <p>
-      <button mat-button (click)="onOpenLiveFeedDialog()">Live Feed</button>
-
-      <!-- Session ID: {{ sessionDetails.sessionId }}
-      User Name: {{ sessionDetails.userName }} -->
-      <!-- itemSize: {{ itemSize }} -->
-    </p>
-    <label>
-      <input type="checkbox" (change)="onToggleTimestamp()"> Show Time
-    </label>
+  <p>
     <button mat-button (click)="onOpenLiveFeedDialog()">Live Feed</button>
+  </p>
+  <label>
+    <input type="checkbox" (change)="onToggleTimestamp()"> Show Time
+  </label>
+  <button mat-button (click)="onOpenLiveFeedDialog()">Live Feed</button>
+  <button mat-button (click)="onPerformAnnotation()">Perform Annotation</button>
 
-    <button mat-button (click)="onPerformAnnotation()">Perform Annotation</button>
-
-  </div>
-  
+  <!-- Search Functionality -->
+  <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (input)="onSearch()">
+  <label>
+    <input type="checkbox" [(ngModel)]="wholeWord" (change)="onSearch()"> Whole Word
+  </label>
+  <label>
+    <input type="checkbox" [(ngModel)]="matchCase" (change)="onSearch()"> Match Case
+  </label>
+  <button mat-button (click)="onSearchNext()">Next</button>
+  <button mat-button (click)="onSearchPrevious()">Previous</button>
+  <span>Page: {{ currentPage }} Line: {{ currentLine }}</span>
+</div>

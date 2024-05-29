@@ -16,27 +16,30 @@ export class AnnotationDialogService {
     private annotationService: AnnotationService
   ) {}
 
-  openDialog(viewMode: 'list' | 'create' | 'edit', annotation?: Annotation): MatDialogRef<AnnotationDialogComponent> {
+  openDialog(annotation?: Annotation): MatDialogRef<AnnotationDialogComponent> {
+    if (this.dialogRef) {
+      this.dialogRef.componentInstance.annotation = annotation || this.createEmptyAnnotation();
+      this.dialogRef.componentInstance.uniqueId = this.dialogRef.componentInstance.annotation.id;
+      this.dialogRef.componentInstance.selectedText = this.dialogRef.componentInstance.annotation.text;
+    } else {
+      this.dialogRef = this.dialog.open(AnnotationDialogComponent, {
+        width: '400px',
+        position: { right: '0' },
+        data: { annotation: annotation || null },
+        hasBackdrop: false
+      });
 
-    if(!this.dialogRef){
-    this.dialogRef = this.dialog.open(AnnotationDialogComponent, {
-      width: '400px',
-      position: { right: '0' },
-      data: { viewMode, annotation },
-      hasBackdrop: false
-    });
-}
-
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef = null;
-    });
+      this.dialogRef.afterClosed().subscribe(() => {
+        this.dialogRef = null;
+      });
+    }
 
     return this.dialogRef;
   }
 
-  closeDialog(): void {
+  updateDialogSelection(selectedText: string, coordinates: any[]): void {
     if (this.dialogRef) {
-      this.dialogRef.close();
+      this.dialogRef.componentInstance.updateSelection(selectedText, coordinates);
     }
   }
 
@@ -55,5 +58,26 @@ export class AnnotationDialogService {
         }
       });
     }
+  }
+
+  closeDialog(): void {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+  }
+
+  isOpen(): boolean {
+    return this.dialogRef !== null;
+  }
+
+  private createEmptyAnnotation(): Annotation {
+    return {
+      id: '',
+      pageIndex: 0,
+      text: '',
+      color: 'yellow',
+      coordinates: [],
+      timestamp: new Date()
+    };
   }
 }

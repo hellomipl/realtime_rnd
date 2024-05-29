@@ -1,36 +1,13 @@
-<div *ngIf="viewMode === 'list'">
-    <h1 mat-dialog-title>Annotations</h1>
-    <div mat-dialog-content>
-      <ul>
-        <li *ngFor="let annotation of annotationService.listAnnotations(annotation.pageIndex)">
-          <strong>ID:</strong> {{ annotation.id }},
-          <strong>Text:</strong> {{ annotation.text }},
-          <strong>Page:</strong> {{ annotation.pageIndex }}
-          <button mat-button (click)="switchToEditView(annotation)">Edit</button>
-          <button mat-button (click)="deleteAnnotation(annotation.id)">Delete</button>
-        </li>
-      </ul>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="switchToCreateView()">Create New Annotation</button>
-      <button mat-button (click)="closeDialog()">Close</button>
-    </div>
-  </div>
-  
-  <div *ngIf="viewMode === 'create' || viewMode === 'edit'">
-    <h1 mat-dialog-title>{{ viewMode === 'create' ? 'Create Annotation' : 'Edit Annotation' }}</h1>
-    <div mat-dialog-content>
-      <p>Selected Text: {{ selectedText }}</p>
-      <mat-form-field appearance="fill">
-        <mat-label>Unique ID</mat-label>
-        <input matInput [(ngModel)]="uniqueId">
-      </mat-form-field>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="closeDialog()">Cancel</button>
-      <button mat-button (click)="viewMode === 'create' ? addAnnotation() : saveAnnotation()">
-        {{ viewMode === 'create' ? 'Add Annotation' : 'Save Annotation' }}
-      </button>
-    </div>
-  </div>
-  
+<h1 mat-dialog-title>Annotation</h1>
+<div mat-dialog-content>
+  <p>Selected Text: {{ selectedText }}</p>
+  <mat-form-field appearance="fill">
+    <mat-label>Unique ID</mat-label>
+    <input matInput [(ngModel)]="uniqueId">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Close</button>
+  <button mat-button *ngIf="!data.annotation" (click)="addAnnotation()">Add Annotation</button>
+  <button mat-button *ngIf="data.annotation" (click)="updateAnnotation()">Update Annotation</button>
+</div>

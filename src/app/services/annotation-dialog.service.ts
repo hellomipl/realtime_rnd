@@ -16,24 +16,28 @@ export class AnnotationDialogService {
     private annotationService: AnnotationService
   ) {}
 
-  openDialog(annotation: Annotation): MatDialogRef<AnnotationDialogComponent> {
-    if (this.dialogRef) {
-      this.dialogRef.componentInstance.annotation = annotation;
-      this.dialogRef.componentInstance.uniqueId = annotation.id;
-      this.dialogRef.componentInstance.selectedText = annotation.text;
-    } else {
-      this.dialogRef = this.dialog.open(AnnotationDialogComponent, {
-        width: '400px',
-        position: { right: '0' },
-        data: { annotation },hasBackdrop: false
-      });
+  openDialog(viewMode: 'list' | 'create' | 'edit', annotation?: Annotation): MatDialogRef<AnnotationDialogComponent> {
 
-      this.dialogRef.afterClosed().subscribe(() => {
-        this.dialogRef = null;
-      });
-    }
+    if(!this.dialogRef){
+    this.dialogRef = this.dialog.open(AnnotationDialogComponent, {
+      width: '400px',
+      position: { right: '0' },
+      data: { viewMode, annotation },
+      hasBackdrop: false
+    });
+}
+
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef = null;
+    });
 
     return this.dialogRef;
+  }
+
+  closeDialog(): void {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 
   handleDialogResult(pageIndex: number, cdr: ChangeDetectorRef): void {
@@ -51,15 +55,5 @@ export class AnnotationDialogService {
         }
       });
     }
-  }
-
-  closeDialog(): void {
-    if (this.dialogRef) {
-      this.dialogRef.close();
-    }
-  }
-
-  isOpen(): boolean {
-    return this.dialogRef !== null;
   }
 }

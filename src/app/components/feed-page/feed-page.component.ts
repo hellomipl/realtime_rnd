@@ -89,7 +89,7 @@ export class FeedPageComponent implements OnInit {
         };
         this.annotationService.setTempAnnotation(annotation);
         this.showTemporaryAnnotation(annotation);
-        this.annotationDialogService.openDialog(annotation);
+        this.annotationDialogService.openDialog('create', annotation);
         this.annotationDialogService.handleDialogResult(this.page.msg, this.cdr);
       }
     }

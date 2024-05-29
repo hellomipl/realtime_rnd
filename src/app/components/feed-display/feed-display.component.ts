@@ -12,7 +12,6 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FeedDisplayService } from './feed-display.service';
 import { FeedPageComponent } from '../feed-page/feed-page.component';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
-import { Annotation } from '../../models/annotation.interface';
 
 @Component({
   selector: 'app-feed-display',
@@ -77,21 +76,8 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
   }
 
   performAnnotation() {
-    const annotation: Annotation = {
-      id: this.generateUniqueId(),
-      pageIndex: 0,
-      text: '',
-      color: 'yellow',
-      coordinates: [],
-      timestamp: new Date()
-    };
-
-    this.annotationDialogService.openDialog(annotation);
+    this.annotationDialogService.openDialog('list');
     this.annotationDialogService.handleDialogResult(0, this.cdr); // Use 0 as placeholder page index
-  }
-
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
   }
 
   trackByPage(index: number, item: any): number {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Annotation } from '../models/annotation.interface';
 
 @Injectable({
@@ -15,12 +15,8 @@ export class AnnotationService {
     this.loadAnnotationsFromLocalStorage();
   }
 
-  getAnnotations(pageIndex: number): Observable<Annotation[]> {
-    return new Observable(observer => {
-      this.annotationsSubject.subscribe(annotations => {
-        observer.next(annotations[pageIndex] || []);
-      });
-    });
+  getAnnotations(pageIndex: number): BehaviorSubject<Annotation[]> {
+    return new BehaviorSubject(this.annotations[pageIndex] || []);
   }
 
   setTempAnnotation(annotation: Annotation): void {
@@ -44,9 +40,21 @@ export class AnnotationService {
     this.saveAnnotationsToLocalStorage();
   }
 
+  updateAnnotation(pageIndex: number, annotation: Annotation): void {
+    const annotations = this.annotations[pageIndex];
+    const index = annotations.findIndex(a => a.id === annotation.id);
+    if (index !== -1) {
+      annotations[index] = annotation;
+      this.annotationsSubject.next(this.annotations);
+      this.saveAnnotationsToLocalStorage();
+    }
+  }
+
   deleteAnnotation(pageIndex: number, annotationId: string): void {
-    if (this.annotations[pageIndex]) {
-      this.annotations[pageIndex] = this.annotations[pageIndex].filter(annotation => annotation.id !== annotationId);
+    const annotations = this.annotations[pageIndex];
+    const index = annotations.findIndex(a => a.id === annotationId);
+    if (index !== -1) {
+      annotations.splice(index, 1);
       this.annotationsSubject.next(this.annotations);
       this.saveAnnotationsToLocalStorage();
     }

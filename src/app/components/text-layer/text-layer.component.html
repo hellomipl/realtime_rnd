@@ -1,11 +1,12 @@
-
-    <ng-container *ngFor="let line of lines; let lineIndex = index; trackBy: trackByLine" >
-        <app-feed-line 
-        [line]="line" 
-        [lineIndex]="lineIndex" 
-        [pageno]="pageno"
-        [showTimestamp]="showTimestamp"
-        [isBold]="isBold(line.lines, lineIndex, lines)">
-      </app-feed-line> 
-    </ng-container>
-
+<ng-container *ngFor="let line of lines; let lineIndex = index; trackBy: trackByLine">
+  <app-feed-line
+    [line]="line"
+    [lineIndex]="lineIndex + 1"
+    [pageno]="pageno"
+    [showTimestamp]="showTimestamp"
+    [searchTerm]="searchTerm"
+    [highlightedIndexes]="line.highlightedIndexes"
+    [isBold]="isBold(line.lines, lineIndex, lines)"
+    [isCurrent]="lineIndex - 1 === currentOccurrenceIndex">
+  </app-feed-line>
+</ng-container>

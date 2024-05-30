@@ -1,20 +1,23 @@
 .line-text {
     flex-grow: 1;
-}
-.line {
+  }
+  
+  .line {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
-}
-
-.line-number {
+  }
+  
+  .line-number {
     width: 50px;
     text-align: right;
     margin-right: 10px;
     color: #555;
-}
-
-.timestamp {
+  }
+  
+  .timestamp {
     margin-right: 10px;
     color: #999;
-}
+  }
+  
+  

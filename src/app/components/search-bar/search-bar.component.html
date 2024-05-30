@@ -1,0 +1,11 @@
+<div class="search-bar">
+    <input [(ngModel)]="searchTerm" placeholder="Search..." />
+    <button (click)="onSearch()">Search</button>
+    <button (click)="onPrevious()">Previous</button>
+    <button (click)="onNext()">Next</button>
+    <button (click)="onReset()">Reset</button>
+    <div *ngIf="totalOccurrences > 0">
+      {{ currentOccurrence }} / {{ totalOccurrences }} (Page: {{ currentPageIndex }}, Line: {{ currentLineIndex }})
+    </div>
+  </div>
+  

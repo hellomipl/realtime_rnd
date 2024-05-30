@@ -1,5 +1,5 @@
 <div class="page" [ngStyle]="{'height': itemSize + 'px', 'min-height': itemSize + 'px'}">
-  <h6>{{ page.msg }}</h6>
-  <app-text-layer [pageno]="page.msg" [lines]="page.data" [showTimestamp]="showTimestamp" (mouseup)="onMouseUp()"></app-text-layer>
+  <h6>{{ page.msg }} {{searchTerm}}</h6>
+  <app-text-layer [pageno]="page.msg" [lines]="page.data" [searchTerm]="searchTerm" [showTimestamp]="showTimestamp" (mouseup)="onMouseUp()"></app-text-layer>
   <app-annotation-layer [annotations]="page.annotations"></app-annotation-layer>
 </div>

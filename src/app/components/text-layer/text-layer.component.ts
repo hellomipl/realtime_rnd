@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { FeedLineComponent } from '../feed-line/feed-line.component';
 
 @Component({
@@ -15,8 +15,16 @@ export class TextLayerComponent {
   @Input() showTimestamp: boolean=false;
   annotations:any=[];
   zoomLevel:any=1;
+  @Input() searchTerm: string = '';
+  @Input() currentOccurrenceIndex: number = -1;
 
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['searchTerm'] || changes['currentOccurrenceIndex']) {
+      console.log('Search term:', this.searchTerm);
+      console.log('Current occurrence index:', this.currentOccurrenceIndex);
+      
+    }
+  }
   isBold(line: string[], index: number, data: any[]): boolean {
     if (line[0].startsWith('Q.')) {
       return true;

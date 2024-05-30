@@ -13,11 +13,13 @@ import { FeedDisplayService } from './feed-display.service';
 import { FeedPageComponent } from '../feed-page/feed-page.component';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
 import { Annotation } from '../../models/annotation.interface';
+import { SearchBarComponent } from '../search-bar/search-bar.component';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-feed-display',
   standalone: true,
-  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent, FeedPageComponent],
+  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent, FeedPageComponent,SearchBarComponent],
   templateUrl: './feed-display.component.html',
   styleUrls: ['./feed-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,6 +35,8 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
   private destroy$ = new Subject<void>();
 
   constructor(
+    private searchService: SearchService,
+
     private fds: FeedDisplayService,
     public dialog: MatDialog,
     private dataService: DataGenerationService,
@@ -45,6 +49,7 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     this.fds.initialize(this.sessionDetails);
     this.feedData$ = this.fds.feedData$;
     this.lastlines = this.fds.sd.globalLineNo;
+    this.searchService.initialize(this.fds.feedDataSubject.getValue());
   }
 
   ngAfterViewChecked() {

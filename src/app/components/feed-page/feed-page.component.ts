@@ -5,6 +5,7 @@ import { AnnotationLayerComponent } from '../annotation-layer/annotation-layer.c
 import { AnnotationService } from '../../services/annotation.service';
 import { Annotation } from '../../models/annotation.interface';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-feed-page',
@@ -19,11 +20,14 @@ export class FeedPageComponent implements OnInit {
   @Input() showTimestamp: boolean = false;
   annotations: Annotation[] = [];
   zoomLevel: any = 1;
-
+  searchTerm: string = '';
+  currentOccurrenceIndex: number = -1;
   constructor(
     private annotationService: AnnotationService,
     private annotationDialogService: AnnotationDialogService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private searchService: SearchService,
+
   ) {}
 
   ngOnInit(): void {
@@ -32,6 +36,26 @@ export class FeedPageComponent implements OnInit {
       this.page.annotations = annotations;
       this.cdr.detectChanges(); // Trigger change detection
     });
+
+    this.searchService.searchResults$.subscribe(feedData => {
+      if(feedData &&feedData.length){
+        this.page.data = feedData[this.page.page - 1].data;
+        this.searchTerm = this.searchService.searchTerm;
+        this.cdr.detectChanges();
+      }
+
+    });
+
+    this.searchService.currentOccurrence$.subscribe(index => {
+      debugger;
+      if (this.page.page - 1 === this.searchService.occurrences[index]?.pageIndex) {
+        this.currentOccurrenceIndex = this.searchService.occurrences[index].lineIndex;
+      } else {
+        this.currentOccurrenceIndex = -1;
+      }
+      this.cdr.detectChanges();
+    });
+
   }
 
   trackByLine(index: number, item: any): number {

@@ -13,11 +13,12 @@ import { FeedDisplayService } from './feed-display.service';
 import { FeedPageComponent } from '../feed-page/feed-page.component';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
 import { Annotation } from '../../models/annotation.interface';
+import { SearchBarComponent } from '../search-bar/search-bar.component';
 
 @Component({
   selector: 'app-feed-display',
   standalone: true,
-  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent, FeedPageComponent],
+  imports: [CommonModule, ScrollingModule, BoldQADirective, ToolbarComponent, FeedPageComponent,SearchBarComponent],
   templateUrl: './feed-display.component.html',
   styleUrls: ['./feed-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -25,11 +26,13 @@ import { Annotation } from '../../models/annotation.interface';
 export class FeedDisplayComponent implements OnInit, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   feedData$: Observable<any[]> = new BehaviorSubject<any[]>([]);
+ 
   lastlines: Number = 0;
   sessionDetails: any;
   showTimestamp: boolean = false;
   itemSize: any = 835;
   lineHeight: Number = 29;
+ searchData:any=[];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -44,6 +47,7 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     this.sessionDetails = this.dataService.getSessionDetails();
     this.fds.initialize(this.sessionDetails);
     this.feedData$ = this.fds.feedData$;
+    this.searchData = this.fds.feedDataSubject.getValue(); // Use value property instead of getValue() method
     this.lastlines = this.fds.sd.globalLineNo;
   }
 

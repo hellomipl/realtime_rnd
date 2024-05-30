@@ -6,6 +6,7 @@
   (openLiveFeedDialog)="openLiveFeedDialog()"
   (performAnnotation)="performAnnotation()">
 </app-toolbar>
+<app-search-bar [data]="searchData"></app-search-bar>
 <div class="content">
   <cdk-virtual-scroll-viewport [itemSize]="itemSize" class="viewport">
     <ng-container *cdkVirtualFor="let page of feedData$ | async; let pageIndex = index; trackBy: trackByPage">

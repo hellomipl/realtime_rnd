@@ -19,12 +19,12 @@ private sd:any;
 
   getSessionDetails() {
     return {
-      lastPage: 2,
-      lastLineNumber: 22, // Random line number between 1 and 25 for the last page
+      lastPage: 10,
+      lastLineNumber: 2, // Random line number between 1 and 25 for the last page
       sessionId: this.sessionId,
       userName: this.userName,
       settings: {
-        lineNumber: 40,
+        lineNumber: 25,
         startPage: 1,
       },
     };

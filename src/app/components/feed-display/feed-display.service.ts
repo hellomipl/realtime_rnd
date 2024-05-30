@@ -19,7 +19,7 @@ export class FeedDisplayService {
       },
     };
  */
-  private feedDataSubject = new BehaviorSubject<any[]>([]);
+  public feedDataSubject = new BehaviorSubject<any[]>([]);
   feedData$ = this.feedDataSubject.asObservable();
   needScroll: boolean = false; //flag to check if the scroll is needed this will ensure the scroll will happen only once after the viewUpdated
   sd:any;

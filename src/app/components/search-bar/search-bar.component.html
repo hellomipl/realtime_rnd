@@ -1,0 +1,16 @@
+<div class="search-bar">
+  <input [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" placeholder="Search..." />
+  <button (click)="onSearch()">Search</button>
+  <label>
+    <input type="checkbox" [(ngModel)]="wholeWord" /> Whole Word
+  </label>
+  <label>
+    <input type="checkbox" [(ngModel)]="matchCase" /> Match Case
+  </label>
+  <button (click)="onPrevious()">Previous</button>
+  <button (click)="onNext()">Next</button>
+  <div class="search-stats">
+    Matches: {{ totalMatches }} / {{ currentMatch }}
+    Current Page: {{ currentPage }}
+  </div>
+</div>

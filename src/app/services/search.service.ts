@@ -1,4 +1,3 @@
-// src/app/shared/services/search.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -10,19 +9,14 @@ export class SearchService {
   private matches: { page: number, line: number, position: number }[] = [];
   private currentMatchIndex: number = 0;
 
-  isSearching: boolean = false;
   matches$ = new BehaviorSubject<{ page: number, line: number, position: number }[]>([]);
-  currentMatch$ = new BehaviorSubject<{ index: number, flag: boolean }>({ index: 0, flag: true });
+  currentMatch$ = new BehaviorSubject<number>(0);
 
-  constructor() { }
+  constructor() {}
 
-  search(term: string, data: any[], wholeWord: boolean) {
+  search(term: string, data: any[], wholeWord: boolean ) {
     let matchCase: boolean = !wholeWord;
     this.searchTerm = matchCase ? term : term.toLowerCase();
-    if (term === '') {
-      this.reset();
-      return;
-    }
     this.matches = [];
     const regexFlags = matchCase ? 'g' : 'gi';
     let regexTerm = term;
@@ -46,30 +40,20 @@ export class SearchService {
 
     this.matches$.next(this.matches);
     this.currentMatchIndex = 0;
-
-    this.currentMatch$.next({ index: this.currentMatchIndex, flag: true });
-  }
-
-  private reset() {
-    this.searchTerm = '';
-    this.matches = [];
-    this.currentMatchIndex = 0;
-    this.matches$.next(this.matches);
-    this.currentMatch$.next({ index: this.currentMatchIndex, flag: true });
-    this.isSearching = false;
+    this.currentMatch$.next(this.currentMatchIndex);
   }
 
   nextMatch() {
     if (this.matches.length === 0) return;
     this.currentMatchIndex = (this.currentMatchIndex + 1) % this.matches.length;
-    this.currentMatch$.next({index: this.currentMatchIndex, flag: true });
+    this.currentMatch$.next(this.currentMatchIndex);
   }
 
   previousMatch() {
     if (this.matches.length === 0) return;
     this.currentMatchIndex =
       (this.currentMatchIndex - 1 + this.matches.length) % this.matches.length;
-    this.currentMatch$.next({index: this.currentMatchIndex, flag: false });
+    this.currentMatch$.next(this.currentMatchIndex);
   }
 
   getCurrentMatch() {

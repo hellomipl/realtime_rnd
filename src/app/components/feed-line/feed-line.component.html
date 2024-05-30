@@ -1,5 +1,7 @@
 <div class="line" [appBoldQA]="isBold">
     <span class="line-number">{{ pageno }}.{{ line.lineIndex }}</span>
     <span *ngIf="showTimestamp" class="timestamp">{{ line.time }}: </span>
-    <span class="line-text">{{ line.lines[0] }}</span>
+    <!-- <span class="line-text">{{ line.lines[0] }}</span> -->
+    <span #lineText class="line-text" [attr.data-page-number1]="pageno" [attr.data-line-number]="lineIndex">{{ line.lines.join(' ') }}</span>
+
   </div>

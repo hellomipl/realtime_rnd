@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-toolbar',standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,SearchComponent],
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })

@@ -24,7 +24,7 @@ private sd:any;
       sessionId: this.sessionId,
       userName: this.userName,
       settings: {
-        lineNumber: 40,
+        lineNumber: 25,
         startPage: 1,
       },
     };

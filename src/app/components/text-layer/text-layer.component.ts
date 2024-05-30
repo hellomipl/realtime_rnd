@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FeedLineComponent } from '../feed-line/feed-line.component';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-text-layer',
@@ -17,6 +18,7 @@ export class TextLayerComponent {
   zoomLevel:any=1;
 
 
+  constructor(private searchService: SearchService) {}
   isBold(line: string[], index: number, data: any[]): boolean {
     if (line[0].startsWith('Q.')) {
       return true;
@@ -37,6 +39,12 @@ export class TextLayerComponent {
 
   trackByLine(index: number, item: any): number {
     return item.lineIndex;
+  }
+
+  isCurrentMatch(index: number): boolean {
+    const currentMatch = this.searchService.getCurrentMatchIndex();
+    const results = this.searchService.getSearchResults();
+    return results[currentMatch] && results[currentMatch].lineIndex === index;
   }
 
 }

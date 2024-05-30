@@ -5,6 +5,8 @@ import { AnnotationLayerComponent } from '../annotation-layer/annotation-layer.c
 import { AnnotationService } from '../../services/annotation.service';
 import { Annotation } from '../../models/annotation.interface';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
+import { Subscription } from 'rxjs';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-feed-page',
@@ -20,19 +22,28 @@ export class FeedPageComponent implements OnInit {
   annotations: Annotation[] = [];
   zoomLevel: any = 1;
 
-  constructor(
+  constructor(private searchService: SearchService,
     private annotationService: AnnotationService,
     private annotationDialogService: AnnotationDialogService,
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.annotationService.getAnnotations(this.page.msg).subscribe(annotations => {
-      this.annotations = annotations;
-      this.page.annotations = annotations;
-      this.cdr.detectChanges(); // Trigger change detection
-    });
-  }
+ 
+
+    ngOnInit(): void {
+
+      this.annotationService.getAnnotations(this.page.msg).subscribe(annotations => {
+        this.annotations = annotations;
+        this.page.annotations = annotations;
+        this.cdr.detectChanges(); // Trigger change detection
+      });
+
+     
+    }
+  
+    
+   
+  
 
   trackByLine(index: number, item: any): number {
     return item.lineIndex;

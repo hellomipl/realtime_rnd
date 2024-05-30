@@ -1,17 +1,21 @@
 <div class="toolbar">
     <p>
       <button mat-button (click)="onOpenLiveFeedDialog()">Live Feed</button>
-
+      <button mat-button (click)="onPerformAnnotation()">Perform Annotation</button>
+    </p>
       <!-- Session ID: {{ sessionDetails.sessionId }}
       User Name: {{ sessionDetails.userName }} -->
       <!-- itemSize: {{ itemSize }} -->
-    </p>
+      
+    
     <label>
       <input type="checkbox" (change)="onToggleTimestamp()"> Show Time
     </label>
-    <button mat-button (click)="onOpenLiveFeedDialog()">Live Feed</button>
 
-    <button mat-button (click)="onPerformAnnotation()">Perform Annotation</button>
-
+    
+<p>
+  <app-search></app-search>
+</p>
   </div>
+
   

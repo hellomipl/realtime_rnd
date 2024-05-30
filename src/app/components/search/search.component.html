@@ -1,0 +1,18 @@
+<div class="search-container">
+  <input type="text" [(ngModel)]="searchTerm" (keydown)="onSearchTermChange($event)" placeholder="Search term" />
+  <button (click)="performSearch()">Search</button>
+  <button (click)="resetSearch()">Reset</button>
+  <label>
+    <input type="checkbox" [(ngModel)]="wholeWord" (change)="onWholeWordToggle()" />
+    Whole Word
+  </label>
+  <label>
+    <input type="checkbox" [(ngModel)]="regex" (change)="onRegexToggle()" />
+    Regex
+  </label>
+  <div class="search-stats">
+    Total Matches: {{ totalMatches }} | Current: {{ currentMatchIndex + 1 }}
+  </div>
+  <button (click)="navigatePrevious()">Previous</button>
+  <button (click)="navigateNext()">Next</button>
+</div>

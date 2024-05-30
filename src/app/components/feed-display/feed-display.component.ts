@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, OnInit, SimpleChanges } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DataGenerationService } from '../../services/data-generation.service';
@@ -13,6 +13,7 @@ import { FeedDisplayService } from './feed-display.service';
 import { FeedPageComponent } from '../feed-page/feed-page.component';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
 import { Annotation } from '../../models/annotation.interface';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-feed-display',
@@ -31,8 +32,13 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
   itemSize: any = 835;
   lineHeight: Number = 29;
   private destroy$ = new Subject<void>();
+  searchTerm: string = '';
+  searchOptions = { wholeWord: false, regex: false };
+  private subscriptions: Subscription[] = [];
+  currentMatchIndex: number = 0;
 
   constructor(
+    private searchService: SearchService,
     private fds: FeedDisplayService,
     public dialog: MatDialog,
     private dataService: DataGenerationService,
@@ -45,8 +51,85 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     this.fds.initialize(this.sessionDetails);
     this.feedData$ = this.fds.feedData$;
     this.lastlines = this.fds.sd.globalLineNo;
+
+    this.subscriptions.push(
+      this.searchService.searchTerm$.subscribe(term => {
+        this.searchTerm = term;
+        this.performGlobalSearch();
+      })
+    );
+
+    this.subscriptions.push(
+      this.searchService.searchOptions$.subscribe(options => {
+        this.searchOptions = options;
+        this.performGlobalSearch();
+      })
+    );
+
+    this.subscriptions.push(
+      this.searchService.currentMatchIndex$.subscribe(index => {
+        this.scrollToCurrentMatch(index);
+      })
+    );
   }
 
+  performGlobalSearch() {
+    if (!this.searchTerm) return;
+
+    const results:any = [];
+    this.feedData$.pipe(takeUntil(this.destroy$)).subscribe(feedData => {
+      feedData.forEach((page, pageIndex) => {
+        page.data.forEach((line: any, lineIndex: number) => {
+          const matchIndices = this.findMatches(line.lines[0], this.searchTerm, this.searchOptions);
+          matchIndices.forEach(matchIndex => {
+            results.push({ pageIndex, lineIndex, matchIndex });
+          });
+        });
+      });
+      this.cdr.detectChanges();
+      this.searchService.updateSearchResults(results);
+    });
+  }
+
+  findMatches(line: string, term: string, options: { wholeWord: boolean, regex: boolean }): number[] {
+    const matches = [];
+    let regex;
+    if (options.regex) {
+      regex = new RegExp(term, 'g');
+    } else if (options.wholeWord) {
+      regex = new RegExp(`\\b${term}\\b`, 'g');
+    } else {
+      regex = new RegExp(term, 'gi');
+    }
+
+    let match;
+    while ((match = regex.exec(line)) !== null) {
+      matches.push(match.index);
+    }
+    return matches;
+  }
+
+  private scrollToCurrentMatch(index: number): void {
+    
+    const results = this.searchService.getSearchResults();
+    if (results.length === 0) return;
+
+    const currentMatch = results[index];
+    const currentPage = currentMatch.pageIndex;
+    const currentLine = currentMatch.lineIndex;
+
+    // Scroll to the page containing the current match
+    this.viewport.scrollToIndex(currentPage, 'smooth');
+
+    // After scrolling to the page, scroll to the specific line
+    setTimeout(() => {
+      const lineOffset = currentLine * this.itemSize;
+      this.viewport.scrollToOffset(lineOffset, 'smooth');
+    }, 300);
+  }
+
+   
+ 
   ngAfterViewChecked() {
     if (this.fds.needScroll) {
       console.log('View has been checked and updated', this.fds.needScroll, this.itemSize);
@@ -103,6 +186,8 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    
+    this.subscriptions.forEach(sub => sub.unsubscribe());
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -137,4 +222,15 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
       this.viewport.checkViewportSize();
     }
   }
+
+
+
+
+
+
+
+
+
+
+  
 }

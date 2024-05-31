@@ -57,6 +57,7 @@ export class SearchService {
   }
 
   getCurrentMatch() {
+    debugger;
     return this.matches[this.currentMatchIndex];
   }
 }

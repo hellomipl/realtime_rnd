@@ -41,4 +41,8 @@ export class SearchBarComponent {
     const currentMatch = this.searchService.getCurrentMatch();
     return currentMatch ? currentMatch.page + 1 : 1;
   }
+  get currentLine() {
+    const Currentline = this.searchService.getCurrentLine();
+    return Currentline ? Currentline.line + 1 : 1;
+  }
 }

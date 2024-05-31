@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { DataGenerationService } from '../../services/data-generation.service';
 import { FeedData, LineData } from '../../models/data.interface';
+import { SearchService } from '../../services/search.service';
 
 @Injectable({
   providedIn: 'root'

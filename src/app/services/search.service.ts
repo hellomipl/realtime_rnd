@@ -15,7 +15,10 @@ export class SearchService {
   constructor() {}
 
   search(term: string, data: any[], wholeWord: boolean ) {
+  
     let matchCase: boolean = !wholeWord;
+ 
+    matchCase=false;
     this.searchTerm = matchCase ? term : term.toLowerCase();
     this.matches = [];
     const regexFlags = matchCase ? 'g' : 'gi';
@@ -57,6 +60,10 @@ export class SearchService {
   }
 
   getCurrentMatch() {
+    debugger;
+    return this.matches[this.currentMatchIndex];
+  }
+  getCurrentLine() {
     debugger;
     return this.matches[this.currentMatchIndex];
   }

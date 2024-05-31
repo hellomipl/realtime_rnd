@@ -14,6 +14,7 @@ import { FeedPageComponent } from '../feed-page/feed-page.component';
 import { AnnotationDialogService } from '../../services/annotation-dialog.service';
 import { Annotation } from '../../models/annotation.interface';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-feed-display',
@@ -36,6 +37,7 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
   private destroy$ = new Subject<void>();
 
   constructor(
+    private ss:SearchService,
     private fds: FeedDisplayService,
     public dialog: MatDialog,
     private dataService: DataGenerationService,
@@ -49,6 +51,9 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     this.feedData$ = this.fds.feedData$;
     this.searchData = this.fds.feedDataSubject.getValue(); // Use value property instead of getValue() method
     this.lastlines = this.fds.sd.globalLineNo;
+    this.ss.currentMatch$.subscribe((index) => {
+      this.scrollToLastLine1();
+    });
   }
 
   ngAfterViewChecked() {
@@ -110,11 +115,31 @@ export class FeedDisplayComponent implements OnInit, AfterViewInit {
     this.destroy$.next();
     this.destroy$.complete();
   }
+  private scrollToLastLine1(): void {
+    const screenHeight = window.innerHeight;
+    const scrollHeight = (this.itemSize + 60) - (screenHeight - 56);
+    let pg:any = this.ss.getCurrentMatch()
+    pg = pg.page;
+    let ll:any = this.ss.getCurrentLine();
+    ll = ll.line;
+    console.log('pg = ',pg,'ll = ',ll);
+    this.feedData$.pipe(takeUntil(this.destroy$)).subscribe(feedData => {
+      if (this.viewport && feedData.length > 0) {
+        const lastLine = Number(ll);
+        const totalLines = Number(this.fds.sd.settings.lineNumber)
 
+        const scrollOffset = (totalLines - lastLine) * Number(this.lineHeight);
+        this.viewport.scrollToIndex(pg);
+
+        const currentScrollPosition = this.viewport.measureScrollOffset();
+        this.viewport.scrollToOffset(currentScrollPosition - (scrollOffset - scrollHeight - 30));
+      }
+    });
+  }
   private scrollToLastLine(): void {
     const screenHeight = window.innerHeight;
     const scrollHeight = (this.itemSize + 60) - (screenHeight - 56);
-
+    
     this.feedData$.pipe(takeUntil(this.destroy$)).subscribe(feedData => {
       if (this.viewport && feedData.length > 0) {
         const lastLine = Number(this.fds.sd.lastLineNumber - 1);

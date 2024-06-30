@@ -17,11 +17,10 @@ export class FeedLineComponent {
   @Input() showTimestamp: boolean=false;
   @Input() isBold: boolean=false;
   @ViewChild('lineText', { static: true }) lineText!: ElementRef;
-  pageIndex: number = 0;
-  lineNumber:number=0;
+  
   constructor(private searchService: SearchService) {
-    this.pageIndex = this.pageno;
-    this.lineNumber = this.lineIndex;
+    // this.pageIndex = this.pageno;
+    // this.lineNumber = this.lineIndex;
   }
 
 
@@ -52,7 +51,7 @@ export class FeedLineComponent {
 
     let text = this.line.lines.join(' ');
     let offset = 0;
-
+    console.log('matches', matches);
     matches.forEach((match, index) => {
       const start = match.position + offset;
       const end = start + searchTerm.length;

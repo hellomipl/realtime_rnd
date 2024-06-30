@@ -1,0 +1,21 @@
+<div>
+    <div>
+      <button (click)="createRoom()">Create Room</button>
+      <input [(ngModel)]="roomId" placeholder="Enter Room ID">
+      <button (click)="joinRoom()">Join Room</button>
+    </div>
+    <div *ngIf="roomId">
+      <p>Room ID: {{ roomId }}</p>
+      <p>Users in room:</p>
+      <ul>
+        <li *ngFor="let user of users">{{ user }}</li>
+      </ul>
+      <button *ngIf="!isScreenSharing" (click)="startScreenShare()">Start Screen Share</button>
+      <button *ngIf="isScreenSharing" (click)="stopScreenShare()">Stop Screen Share</button>
+    </div>
+    <div>
+      <video id="localVideo" autoplay muted playsinline></video>
+      <video id="remoteVideo" autoplay playsinline></video>
+    </div>
+  </div>
+  

@@ -35,6 +35,8 @@ export class ViewerComponent implements OnInit {
   setupViewer() {
     const iceServers = [
       { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
+      { urls: 'stun:stun1.l.google.com:19302' }, // Additional STUN server
+      { urls: 'stun:stun2.l.google.com:19302' }, // Additional STUN server
       {
         urls: 'turn:161.97.153.182:3478', // TURN server without SSL
         username: 'turnuser',

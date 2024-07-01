@@ -45,7 +45,7 @@ export class ViewerComponent implements OnInit {
     ];
   
     this.peerConnection = new RTCPeerConnection({ iceServers });
-  
+
     this.peerConnection.ontrack = (event) => {
       console.log('Received track from presenter');
       const video = document.getElementById('remoteVideo') as HTMLVideoElement;
@@ -97,5 +97,4 @@ export class ViewerComponent implements OnInit {
       console.error('Room not found');
     });
   }
-  
 }

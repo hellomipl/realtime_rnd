@@ -14,18 +14,7 @@ const corsOptions = {
     }
   }
 };
-app.use(cors({
-    origin: function(origin, callback) {
-        
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    }
-  }));
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -41,7 +30,7 @@ io.on('connection', (socket) => {
   console.log('New client connected');
 
   socket.on('create-room', (roomId) => {
-    rooms[roomId] = { offer: null, candidates: [], viewers: [] };
+    rooms[roomId] = { offer: null, candidates: {}, viewers: [] };
     socket.join(roomId);
     console.log(`Room ${roomId} created`);
     socket.emit('room-created', roomId);
@@ -52,37 +41,30 @@ io.on('connection', (socket) => {
       socket.join(roomId);
       rooms[roomId].viewers.push(socket.id);
       console.log(`Client joined room ${roomId}`);
-      io.to(roomId).emit('viewer-joined', rooms[roomId].viewers);
-
-      if (rooms[roomId].offer) {
-        console.log(`Sending existing offer to new client in room ${roomId}`);
-        socket.emit('offer', rooms[roomId].offer);
-      }
-      // Send all stored candidates to the newly joined client
-      rooms[roomId].candidates.forEach(candidate => {
-        console.log(`Sending stored candidate to new client in room ${roomId}`);
-        socket.emit('candidate', candidate);
-      });
+      io.to(roomId).emit('viewer-joined', socket.id);
     } else {
       socket.emit('room-not-found');
     }
   });
 
-  socket.on('offer', ({ roomId, offer }) => {
+  socket.on('offer', ({ roomId, viewerId, offer }) => {
     rooms[roomId].offer = offer;
-    console.log(`Offer stored for room ${roomId}`);
-    socket.to(roomId).emit('offer', offer);
+    console.log(`Offer stored for room ${roomId} to viewer ${viewerId}`);
+    socket.to(viewerId).emit('offer', offer);
   });
 
-  socket.on('answer', ({ roomId, answer }) => {
-    console.log(`Answer received for room ${roomId}`);
-    socket.to(roomId).emit('answer', answer);
+  socket.on('answer', ({ roomId, viewerId, answer }) => {
+    console.log(`Answer received for room ${roomId} from viewer ${viewerId}`);
+    socket.to(roomId).emit('answer', { viewerId, answer });
   });
 
-  socket.on('candidate', ({ roomId, candidate }) => {
-    rooms[roomId].candidates.push(candidate);
-    console.log(`Candidate stored for room ${roomId}`);
-    socket.to(roomId).emit('candidate', candidate);
+  socket.on('candidate', ({ roomId, viewerId, candidate }) => {
+    if (!rooms[roomId].candidates[viewerId]) {
+      rooms[roomId].candidates[viewerId] = [];
+    }
+    rooms[roomId].candidates[viewerId].push(candidate);
+    console.log(`Candidate stored for room ${roomId} and viewer ${viewerId}`);
+    socket.to(viewerId).emit('candidate', candidate);
   });
 
   socket.on('disconnect', () => {
@@ -91,7 +73,7 @@ io.on('connection', (socket) => {
       const index = rooms[roomId].viewers.indexOf(socket.id);
       if (index !== -1) {
         rooms[roomId].viewers.splice(index, 1);
-        io.to(roomId).emit('viewer-left', rooms[roomId].viewers);
+        io.to(roomId).emit('viewer-left', socket.id);
       }
     }
   });

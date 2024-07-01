@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './viewer.component.scss'
 })
 export class ViewerComponent implements OnInit {
-
   private peerConnection: RTCPeerConnection | null = null;
   public roomId: string = '';
 
@@ -29,21 +28,23 @@ export class ViewerComponent implements OnInit {
 
   joinRoom() {
     console.log(`Joining room ${this.roomId}`);
-    this.socketService.joinRoom(this.roomId);
+    if (this.roomId) {
+      this.socketService.joinRoom(this.roomId);
+    } else {
+      console.error('Room ID is not defined');
+    }
   }
 
   setupViewer() {
     const iceServers = [
-      { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
-      { urls: 'stun:stun1.l.google.com:19302' }, // Additional STUN server
-      { urls: 'stun:stun2.l.google.com:19302' }, // Additional STUN server
+      { urls: 'stun:stun.l.google.com:19302' },
       {
-        urls: 'turn:161.97.153.182:3478', // TURN server without SSL
+        urls: 'turn:161.97.153.182:3478',
         username: 'turnuser',
         credential: 'turnpassword'
       }
     ];
-  
+
     this.peerConnection = new RTCPeerConnection({ iceServers });
 
     this.peerConnection.ontrack = (event) => {
@@ -56,14 +57,17 @@ export class ViewerComponent implements OnInit {
         console.error('Error attempting to play:', error);
       });
     };
-  
+
     this.peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log('Sending ICE candidate');
-        this.socketService.sendCandidate(this.roomId, event.candidate);
+        if (this.roomId && this.socketService.socket.id) {
+          this.socketService.sendCandidate(this.roomId, this.socketService.socket.id, event.candidate);
+        } else {
+          console.error('Room ID or socket ID is not defined');
+        }
       }
     };
-  
+
     this.socketService.onOffer((offer) => {
       if (offer) {
         console.log('Received offer from server');
@@ -72,7 +76,11 @@ export class ViewerComponent implements OnInit {
           return this.peerConnection?.createAnswer();
         }).then((answer) => {
           this.peerConnection?.setLocalDescription(answer);
-          this.socketService.sendAnswer(this.roomId, answer);
+          if (this.roomId) {
+            this.socketService.sendAnswer(this.roomId, answer);
+          } else {
+            console.error('Room ID is not defined');
+          }
         }).catch((error) => {
           console.error('Error setting remote description or creating answer:', error);
         });
@@ -80,8 +88,8 @@ export class ViewerComponent implements OnInit {
         console.error('Received null offer');
       }
     });
-  
-    this.socketService.onCandidate((candidate) => {
+
+    this.socketService.onCandidate((candidate:any) => {
       if (candidate && candidate.sdpMid !== null && candidate.sdpMLineIndex !== null) {
         console.log('Received ICE candidate from server');
         const rtcCandidate = new RTCIceCandidate(candidate);
@@ -92,7 +100,7 @@ export class ViewerComponent implements OnInit {
         console.error('Received invalid candidate:', candidate);
       }
     });
-  
+
     this.socketService.onRoomNotFound(() => {
       console.error('Room not found');
     });

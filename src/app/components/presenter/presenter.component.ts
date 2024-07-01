@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './presenter.component.scss'
 })
 export class PresenterComponent implements OnInit {
-  private peerConnection: RTCPeerConnection | null = null;
+  private peerConnections: { [viewerId: string]: RTCPeerConnection } = {};
   public roomId: string = '';
   public viewers: string[] = [];
 
@@ -23,19 +23,49 @@ export class PresenterComponent implements OnInit {
       this.startSharing();
     });
 
-    this.socketService.onViewerJoined((viewers) => {
-      this.viewers = viewers;
-      this.sendOffer();
+    this.socketService.onViewerJoined((viewerId) => {
+      this.viewers.push(viewerId);
+      this.createPeerConnection(viewerId);
     });
 
-    this.socketService.onViewerLeft((viewers) => {
-      this.viewers = viewers;
+    this.socketService.onViewerLeft((viewerId) => {
+      this.viewers = this.viewers.filter(id => id !== viewerId);
+      if (this.peerConnections[viewerId]) {
+        this.peerConnections[viewerId].close();
+        delete this.peerConnections[viewerId];
+      }
+    });
+
+    this.socketService.onAnswer((data:any) => {
+      const { viewerId, answer } = data;
+      const peerConnection = this.peerConnections[viewerId];
+      if (peerConnection) {
+        const remoteDesc = new RTCSessionDescription(answer);
+        peerConnection.setRemoteDescription(remoteDesc).catch((error) => {
+          console.error('Error setting remote description:', error);
+        });
+      } else {
+        console.error('PeerConnection not found for viewer', viewerId);
+      }
+    });
+
+    this.socketService.onCandidate((data:any) => {
+      const { viewerId, candidate } = data;
+      const peerConnection = this.peerConnections[viewerId];
+      if (peerConnection) {
+        const rtcCandidate = new RTCIceCandidate(candidate);
+        peerConnection.addIceCandidate(rtcCandidate).catch((error) => {
+          console.error('Error adding ICE candidate:', error);
+        });
+      } else {
+        console.error('PeerConnection not found for viewer', viewerId);
+      }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.peerConnection) {
-      this.peerConnection.close();
+    for (let viewerId in this.peerConnections) {
+      this.peerConnections[viewerId].close();
     }
   }
 
@@ -53,69 +83,44 @@ export class PresenterComponent implements OnInit {
     navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
       const video = document.getElementById('localVideo') as HTMLVideoElement;
       video.srcObject = stream;
-  
-      const iceServers = [
-        { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
-        { urls: 'stun:stun1.l.google.com:19302' }, // Additional STUN server
-        { urls: 'stun:stun2.l.google.com:19302' }, // Additional STUN server
-        {
-          urls: 'turn:161.97.153.182:3478', // TURN server without SSL
-          username: 'turnuser',
-          credential: 'turnpassword'
-        }
-      ];
-  
-      this.peerConnection = new RTCPeerConnection({ iceServers });
-  
-      this.peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          console.log('Sending ICE candidate');
-          this.socketService.sendCandidate(this.roomId, event.candidate);
-        }
-      };
-  
-      stream.getTracks().forEach(track => {
-        this.peerConnection?.addTrack(track, stream);
+
+      this.viewers.forEach(viewerId => {
+        this.createPeerConnection(viewerId);
+        stream.getTracks().forEach(track => {
+          this.peerConnections[viewerId].addTrack(track, stream);
+        });
       });
-  
-      this.sendOffer();
     }).catch((error) => {
       console.error('Error accessing display media:', error);
     });
   }
-  
 
-  sendOffer() {
-    if (!this.peerConnection) return;
+  createPeerConnection(viewerId: string) {
+    const iceServers = [
+      { urls: 'stun:stun.l.google.com:19302' },
+      {
+        urls: 'turn:161.97.153.182:3478',
+        username: 'turnuser',
+        credential: 'turnpassword'
+      }
+    ];
 
-    this.peerConnection.createOffer().then((offer) => {
-      this.peerConnection?.setLocalDescription(offer);
-      this.socketService.sendOffer(this.roomId, offer);
+    const peerConnection = new RTCPeerConnection({ iceServers });
+
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        this.socketService.sendCandidate(this.roomId, viewerId, event.candidate);
+      }
+    };
+
+    this.peerConnections[viewerId] = peerConnection;
+
+    peerConnection.createOffer().then((offer) => {
+      return peerConnection.setLocalDescription(offer);
+    }).then(() => {
+      this.socketService.sendOffer(this.roomId, viewerId, peerConnection.localDescription);
     }).catch((error) => {
       console.error('Error creating offer:', error);
-    });
-
-    this.socketService.onAnswer((answer) => {
-      if (this.peerConnection?.signalingState === "have-local-offer") {
-        const remoteDesc = new RTCSessionDescription(answer);
-        this.peerConnection.setRemoteDescription(remoteDesc).catch((error) => {
-          console.error('Error setting remote description:', error);
-        });
-      } else {
-        console.warn('Ignoring answer because signaling state is', this.peerConnection?.signalingState);
-      }
-    });
-
-    this.socketService.onCandidate((candidate) => {
-      if (candidate && candidate.sdpMid !== null && candidate.sdpMLineIndex !== null) {
-        console.log('Received ICE candidate from server');
-        const rtcCandidate = new RTCIceCandidate(candidate);
-        this.peerConnection?.addIceCandidate(rtcCandidate).catch((error) => {
-          console.error('Error adding ICE candidate:', error);
-        });
-      } else {
-        console.error('Received invalid candidate:', candidate);
-      }
     });
   }
 }

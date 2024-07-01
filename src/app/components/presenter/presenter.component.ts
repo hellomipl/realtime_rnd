@@ -55,7 +55,16 @@ export class PresenterComponent implements OnInit {
       const video = document.getElementById('localVideo') as HTMLVideoElement;
       video.srcObject = stream;
 
-      this.peerConnection = new RTCPeerConnection();
+      const iceServers = [
+        { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
+        {
+          urls: 'turn:161.97.153.182:3478', // TURN server without SSL
+          username: 'turnuser',
+          credential: 'turnpassword'
+        }
+      ];
+
+      this.peerConnection = new RTCPeerConnection({ iceServers });
 
       this.peerConnection.onicecandidate = (event) => {
         if (event.candidate) {

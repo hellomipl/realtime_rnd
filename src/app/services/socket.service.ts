@@ -8,7 +8,7 @@ export class SocketService {
   private socket;
 
   constructor() {
-    this.socket = io('http://161.97.153.182:4000');
+    this.socket = io('http://etabella.legal',{path:'/sharingapp/'});
   }
 
   public createRoom(roomId: string) {

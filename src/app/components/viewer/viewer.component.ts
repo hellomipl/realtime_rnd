@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class ViewerComponent implements OnInit {
 
-
   private peerConnection: RTCPeerConnection | null = null;
   public roomId: string = '';
 
@@ -34,7 +33,16 @@ export class ViewerComponent implements OnInit {
   }
 
   setupViewer() {
-    this.peerConnection = new RTCPeerConnection();
+    const iceServers = [
+      { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
+      {
+        urls: 'turn:<your-ip>:3478', // TURN server without SSL
+        username: '<your-username>',
+        credential: '<your-password>'
+      }
+    ];
+
+    this.peerConnection = new RTCPeerConnection({ iceServers });
 
     this.peerConnection.ontrack = (event) => {
       console.log('Received track from presenter');

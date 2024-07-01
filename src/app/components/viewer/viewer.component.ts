@@ -36,9 +36,9 @@ export class ViewerComponent implements OnInit {
     const iceServers = [
       { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
       {
-        urls: 'turn:<your-ip>:3478', // TURN server without SSL
-        username: '<your-username>',
-        credential: '<your-password>'
+        urls: 'turn:161.97.153.182:3478', // TURN server without SSL
+        username: 'turnuser',
+        credential: 'turnpassword'
       }
     ];
 

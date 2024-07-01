@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './presenter.component.scss'
 })
 export class PresenterComponent implements OnInit {
-
   private peerConnection: RTCPeerConnection | null = null;
   public roomId: string = '';
   public viewers: string[] = [];
@@ -59,8 +58,8 @@ export class PresenterComponent implements OnInit {
         { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
         {
           urls: 'turn:161.97.153.182:3478', // TURN server without SSL
-          username: 'turnuser',
-          credential: 'turnpassword'
+          username: 'turnuser1',
+          credential: 'turnpassword1'
         }
       ];
 

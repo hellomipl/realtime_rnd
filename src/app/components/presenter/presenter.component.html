@@ -1,0 +1,14 @@
+
+<h2>Presenter</h2>
+<button (click)="createRoom()">Create Room</button>
+<div *ngIf="roomId">Room ID: {{ roomId }}
+    <br>
+    <button (click)="startSharing()">Start Sharing</button>
+</div>
+<div *ngIf="viewers.length > 0">
+  <h3>Current Viewers:</h3>
+  <ul>
+    <li *ngFor="let viewer of viewers">{{ viewer }}</li>
+  </ul>
+</div>
+<video id="localVideo" width="800" height="600" autoplay muted></video>

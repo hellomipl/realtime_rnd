@@ -9,5 +9,11 @@ export const routes: Routes = [{
 {
     path: 'feed',
     loadComponent:()=>import('./components/feed-display/feed-display.component').then(m=>m.FeedDisplayComponent),
+},{
+    path:'presenter',
+    loadComponent:()=>import('./components/presenter/presenter.component').then(m=>m.PresenterComponent)
+},{
+    path:'viewer',
+    loadComponent:()=>import('./components/viewer/viewer.component').then(m=>m.ViewerComponent)
 }
 ];

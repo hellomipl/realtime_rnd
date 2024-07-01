@@ -41,9 +41,9 @@ export class ViewerComponent implements OnInit {
         credential: 'turnpassword'
       }
     ];
-
+  
     this.peerConnection = new RTCPeerConnection({ iceServers });
-
+  
     this.peerConnection.ontrack = (event) => {
       console.log('Received track from presenter');
       const video = document.getElementById('remoteVideo') as HTMLVideoElement;
@@ -54,14 +54,14 @@ export class ViewerComponent implements OnInit {
         console.error('Error attempting to play:', error);
       });
     };
-
+  
     this.peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log('Sending ICE candidate');
         this.socketService.sendCandidate(this.roomId, event.candidate);
       }
     };
-
+  
     this.socketService.onOffer((offer) => {
       if (offer) {
         console.log('Received offer from server');
@@ -78,7 +78,7 @@ export class ViewerComponent implements OnInit {
         console.error('Received null offer');
       }
     });
-
+  
     this.socketService.onCandidate((candidate) => {
       if (candidate && candidate.sdpMid !== null && candidate.sdpMLineIndex !== null) {
         console.log('Received ICE candidate from server');
@@ -90,9 +90,10 @@ export class ViewerComponent implements OnInit {
         console.error('Received invalid candidate:', candidate);
       }
     });
-
+  
     this.socketService.onRoomNotFound(() => {
       console.error('Room not found');
     });
   }
+  
 }

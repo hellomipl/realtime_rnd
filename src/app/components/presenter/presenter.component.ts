@@ -53,7 +53,7 @@ export class PresenterComponent implements OnInit {
     navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
       const video = document.getElementById('localVideo') as HTMLVideoElement;
       video.srcObject = stream;
-
+  
       const iceServers = [
         { urls: 'stun:stun.l.google.com:19302' }, // Public STUN server
         {
@@ -62,23 +62,26 @@ export class PresenterComponent implements OnInit {
           credential: 'turnpassword'
         }
       ];
-
+  
       this.peerConnection = new RTCPeerConnection({ iceServers });
-
+  
       this.peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
           console.log('Sending ICE candidate');
           this.socketService.sendCandidate(this.roomId, event.candidate);
         }
       };
-
-      stream.getTracks().forEach(track => this.peerConnection?.addTrack(track, stream));
-
+  
+      stream.getTracks().forEach(track => {
+        this.peerConnection?.addTrack(track, stream);
+      });
+  
       this.sendOffer();
     }).catch((error) => {
       console.error('Error accessing display media:', error);
     });
   }
+  
 
   sendOffer() {
     if (!this.peerConnection) return;
